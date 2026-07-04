@@ -1,4 +1,5 @@
 game.Players.PlayerAdded:Connect(function(player)
+	wait(5)
 	local leaderstats = Instance.new("Folder")
 	leaderstats.Name = "leaderstats"
 	leaderstats.Parent = player	
@@ -6,9 +7,13 @@ game.Players.PlayerAdded:Connect(function(player)
 	moneys.Name = "Money"
 	moneys.Value = "0"
 	moneys.Parent = leaderstats
-	local kills = Instance.new("IntValue")
-	kills.name = "Kills"
-	kills.Value = "0"
-	kills.Parent = leaderstats
+	local damage = Instance.new("IntValue")
+	damage.Name = "Damage"
+	damage.Value = _G.damage
+	damage.Parent = leaderstats
+	while true do
+		wait(2)
+		damage.Value = _G.damage
+	end
 end)
 	
