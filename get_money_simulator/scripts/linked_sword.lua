@@ -1,7 +1,19 @@
+wait(2)
 local Tool = script.Parent
 local Handle = Tool:WaitForChild("Handle")
 local Mesh = Handle:WaitForChild("Mesh")
+local damage_g = _G.dss:GetDataStore("PlayerInfo", "Damage")
+local damage_v = ''
 _G.damage = 0
+local sucess, ErrorMsg pcall(function()
+	damage_v = damage_g:GetAsync(_G.player_name)
+	if damage_v then
+		_G.damage = damage_v
+	end
+end)
+if not sucess then
+	print(ErrorMsg)
+end
 local Players = game:GetService("Players")
 local Debris = game:GetService("Debris")
 local RunService = game:GetService("RunService")
@@ -116,8 +128,7 @@ function Blow(Hit)
 	UntagHumanoid(humanoid)
 	TagHumanoid(humanoid, Player)
 	humanoid:TakeDamage(Damage)
-	_G.damage += Damage
-	print(_G.damage)
+	_G.damage += Damage / 4
 end
 
 function Activated()
