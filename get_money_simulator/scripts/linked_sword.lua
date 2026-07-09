@@ -128,7 +128,9 @@ function Blow(Hit)
 	UntagHumanoid(humanoid)
 	TagHumanoid(humanoid, Player)
 	humanoid:TakeDamage(Damage)
-	_G.damage += Damage / 4
+	if Hit.Parent ~= _G.gregaozao then
+		_G.damage += Damage / 4
+	end
 end
 
 function Activated()

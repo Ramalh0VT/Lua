@@ -5,7 +5,7 @@ game.Players.PlayerAdded:Connect(function(player)
 	local damage_t = 0
 	_G.player_name = player.Name
 	_G.dss = game:GetService("DataStoreService")
-	wait(3)
+	wait(4)
 	local player_info = _G.dss:getDataStore("PlayerInfo")
 	local leaderstats = Instance.new("Folder")
 	leaderstats.Name = "leaderstats"
