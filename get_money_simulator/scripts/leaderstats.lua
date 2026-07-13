@@ -1,9 +1,12 @@
-_G.player_name = ''
+_G.player_id = ''
 _G.dss = ''
+_G.ownerships = {}
+local cv_money = 0
+local cv_damage = 0
 game.Players.PlayerAdded:Connect(function(player)
 	local money_t = 0
 	local damage_t = 0
-	_G.player_name = player.Name
+	_G.player_id = player.UserId
 	_G.dss = game:GetService("DataStoreService")
 	wait(4)
 	local player_info = _G.dss:getDataStore("PlayerInfo")
@@ -20,14 +23,24 @@ game.Players.PlayerAdded:Connect(function(player)
 	damage.Parent = leaderstats
 	local money_ts = _G.dss:GetDataStore("PlayerInfo", "Money")
 	local damage_ts = _G.dss:GetDataStore("PlayerInfo", "Damage")
+	local ownerships = _G.dss:GetDataStore("PlayerInfo", "Ownerships")
 	local sucess, ErrorMsg = pcall(function() 
-		money_t = money_ts:GetAsync(_G.player_name) 
+		money_t = money_ts:GetAsync(_G.player_id) 
 	end)
 	if not sucess then
 		print(ErrorMsg)
 	end
 	local sucess, ErrorMsg = pcall(function()
-		damage_t = damage_ts:GetAsync(_G.player_name)
+		damage_t = damage_ts:GetAsync(_G.player_id)
+	end)
+	if not sucess then
+		print(ErrorMsg)
+	end
+	local sucess, ErrorMsg = pcall(function()
+		_G.ownerships = ownerships:GetAsync(_G.player_id)
+		if not _G.ownerships then
+			_G.ownerships = {}
+		end
 	end)
 	if not sucess then
 		print(ErrorMsg)
@@ -39,18 +52,25 @@ game.Players.PlayerAdded:Connect(function(player)
 		damage.Value = damage_t
 	end
 	while true do
-		wait(1)
+		wait(4)
+		_G.money = money.Value
 		damage.Value = _G.damage
-		local cv_money = money.Value
-		local cv_damage = damage.Value
+		cv_money = money.Value
+		cv_damage = damage.Value
 		local sucess, ErrorMsg = pcall(function()
-			return money_ts:setAsync(_G.player_name, cv_money)
+			return money_ts:setAsync(_G.player_id, cv_money)
 		end)
 		if not sucess then
 			print(ErrorMsg)
 		end
 		local sucess, ErrorMsg = pcall(function()
-			return damage_ts:setAsync(_G.player_name, cv_damage)
+			return damage_ts:setAsync(_G.player_id, cv_damage)
+		end)
+		if not sucess then
+			print(ErrorMsg)
+		end
+		local sucess, ErrorMsg = pcall(function()
+			return ownerships:setAsync(_G.player_id, _G.ownerships)
 		end)
 	end
 end)

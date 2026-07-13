@@ -6,7 +6,7 @@ local damage_g = _G.dss:GetDataStore("PlayerInfo", "Damage")
 local damage_v = ''
 _G.damage = 0
 local sucess, ErrorMsg pcall(function()
-	damage_v = damage_g:GetAsync(_G.player_name)
+	damage_v = damage_g:GetAsync(_G.player_id)
 	if damage_v then
 		_G.damage = damage_v
 	end
