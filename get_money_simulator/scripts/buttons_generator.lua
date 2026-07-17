@@ -1,5 +1,5 @@
 local items = {"Paintball", "Firebrand"}
-local prices = {150, 190} 
+local prices = {400 , 850}
 local img_ids = {"rbxassetid://93740376", "rbxassetid://77392688"}
 _G.items = items
 local buy = script.Parent.Parent.Parent.item_desc.Frame.buy
@@ -40,6 +40,7 @@ for _, descendant in descendants do
 		end)
 	end
 end
+wait(5)
 bye.MouseButton1Down:Connect(function()
 	local to_disable = bye.Parent.Parent
 	to_disable.Enabled = false
@@ -52,6 +53,16 @@ buy.MouseButton1Down:Connect(function()
 	elseif _G.money >= price and not _G.ownerships[id] then
 		_G.money -= price
 		_G.ownerships[id] = true
+		local player = Game.Players:FindFirstChild(_G.player_name)
+		local backpack = player:FindFirstChild("Backpack")
+		for n, v in _G.ownerships do
+			local item = backpack.store_gears:FindFirstChild(n)
+			if item then
+				if _G.ownerships[n] then
+					item.Parent = backpack
+				end
+			end
+		end
 		item_desc.Frame.desc.Text = name.." Sucessfully bought!"
 		wait(1.4)
 		item_desc.Frame.desc.Text = desc

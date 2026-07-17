@@ -1,15 +1,13 @@
 _G.player_id = ''
 _G.dss = ''
+_G.player_name = ''
 _G.ownerships = {}
-local cv_money = 0
-local cv_damage = 0
+_G.damage = 0
+_G.money = 0
 game.Players.PlayerAdded:Connect(function(player)
-	local money_t = 0
-	local damage_t = 0
 	_G.player_id = player.UserId
+	_G.player_name = player.Name
 	_G.dss = game:GetService("DataStoreService")
-	wait(4)
-	local player_info = _G.dss:getDataStore("PlayerInfo")
 	local leaderstats = Instance.new("Folder")
 	leaderstats.Name = "leaderstats"
 	leaderstats.Parent = player	
@@ -21,23 +19,24 @@ game.Players.PlayerAdded:Connect(function(player)
 	damage.Name = "Damage"
 	damage.Value = 0
 	damage.Parent = leaderstats
-	local money_ts = _G.dss:GetDataStore("PlayerInfo", "Money")
-	local damage_ts = _G.dss:GetDataStore("PlayerInfo", "Damage")
-	local ownerships = _G.dss:GetDataStore("PlayerInfo", "Ownerships")
+	local player_info = _G.dss:getDataStore("PlayerInfo")
+	local money_ds = _G.dss:GetDataStore("PlayerInfo", "Money")
+	local damage_ds = _G.dss:GetDataStore("PlayerInfo", "Damage")
+	local ownerships_ds = _G.dss:GetDataStore("PlayerInfo", "Ownerships")
 	local sucess, ErrorMsg = pcall(function() 
-		money_t = money_ts:GetAsync(_G.player_id) 
+		_G.money = money_ds:GetAsync(_G.player_id) 
 	end)
 	if not sucess then
 		print(ErrorMsg)
 	end
 	local sucess, ErrorMsg = pcall(function()
-		damage_t = damage_ts:GetAsync(_G.player_id)
+		_G.damage = damage_ds:GetAsync(_G.player_id)
 	end)
 	if not sucess then
 		print(ErrorMsg)
 	end
 	local sucess, ErrorMsg = pcall(function()
-		_G.ownerships = ownerships:GetAsync(_G.player_id)
+		_G.ownerships = ownerships_ds:GetAsync(_G.player_id)
 		if not _G.ownerships then
 			_G.ownerships = {}
 		end
@@ -45,33 +44,49 @@ game.Players.PlayerAdded:Connect(function(player)
 	if not sucess then
 		print(ErrorMsg)
 	end
-	if money_t then
-		money.Value = money_t
+	if not _G.damage then
+		_G.damage = 0
 	end
-	if damage_t then	
-		damage.Value = damage_t
+	if not _G.money then
+		_G.money = 0
 	end
+	for n, item in _G.items do
+		if _G.ownerships[n] == nil then
+			_G.ownerships[n] = false
+		end
+	end
+	local player = Game.Players:FindFirstChild(_G.player_name)
+	local backpack = player:FindFirstChild("Backpack")
+	for n, v in _G.ownerships do
+		local item = backpack.store_gears:FindFirstChild(n)
+		if item then
+			if _G.ownerships[n] then
+				item.Parent = backpack
+			end
+		end
+	end
+	money.Value = _G.money
+	damage.Value = _G.damage
 	while true do
-		wait(4)
-		_G.money = money.Value
+		wait(1)
+		money.Value = _G.money
 		damage.Value = _G.damage
-		cv_money = money.Value
-		cv_damage = damage.Value
 		local sucess, ErrorMsg = pcall(function()
-			return money_ts:setAsync(_G.player_id, cv_money)
+			return money_ds:setAsync(_G.player_id, _G.money)
 		end)
 		if not sucess then
 			print(ErrorMsg)
 		end
 		local sucess, ErrorMsg = pcall(function()
-			return damage_ts:setAsync(_G.player_id, cv_damage)
+			return damage_ds:setAsync(_G.player_id, _G.damage)
 		end)
 		if not sucess then
 			print(ErrorMsg)
 		end
 		local sucess, ErrorMsg = pcall(function()
-			return ownerships:setAsync(_G.player_id, _G.ownerships)
+			return ownerships_ds:setAsync(_G.player_id, _G.ownerships)
 		end)
+
 	end
 end)
 
