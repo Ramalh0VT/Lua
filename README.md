@@ -1,2 +1,2 @@
 # Lua
-Un repositorio para almanecer codigo hecho en lua 
+A repository to store lua/luau code, especially including things revolving roblox games
